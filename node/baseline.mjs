@@ -90,6 +90,7 @@ for(let i = 0; i < sortedAggr.length; i++) {
 output += "}";
 
 console.log(output);
+console.log("Keys: ", sortedAggr.length);
 
 const endTime = performance.now();
 console.log(`Function execution took ${endTime - startTime} milliseconds.`);

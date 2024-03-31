@@ -1,11 +1,21 @@
-import cluster from 'cluster';
-import os from 'os';
-import fs from 'fs/promises';
-import { createReadStream } from 'fs';
-import readline from 'readline';
-import { performance } from 'perf_hooks';
+// import cluster from 'cluster';
+// import os from 'os';
+// import fs from 'fs/promises';
+// import { createReadStream } from 'fs';
+// import readline from 'readline';
+// import { performance } from 'perf_hooks';
+
+// .mjs causing problems with cluster as top/level async/await modules load async (need to research)
+const cluster = require('cluster');
+const os = require('os');
+const fs = require('fs').promises; // For fs/promises
+const { createReadStream } = require('fs');
+const readline = require('readline');
+const { performance } = require('perf_hooks');
 
 const numCPUs = os.cpus().length;
+
+
 const filePath = process.argv[2]; // Path to the large file
 
 if (cluster.isPrimary) {
@@ -23,7 +33,6 @@ if (cluster.isPrimary) {
             const worker = cluster.fork();
             const start = i * chunkSize;
             const end = i === numCPUs - 1 ? size : (i + 1) * chunkSize - 1;
-            //worker.send({ filePath, start, end });i
             
             worker.on('online', () => {
                 worker.send({ filePath, start, end });
@@ -56,7 +65,7 @@ if (cluster.isPrimary) {
         if (++finishedWorkers === numCPUs) {
             // All workers are done, process the final aggregated results
             console.log(finalAggr);
-
+            console.log("Final: ", Object.keys(finalAggr).length);
             // End timing and log execution time
             const endTime = performance.now();
             console.log(`Total execution took ${(endTime - startTime).toFixed(2)} milliseconds.`);
@@ -66,14 +75,13 @@ if (cluster.isPrimary) {
     cluster.on('fork', (worker) => {
         console.log(`Worker ${worker.process.pid} forked`);
     });
-
-  
     
     cluster.on('exit', (worker, code, signal) => {
         console.log(`Worker ${worker.process.pid} finished with code ${code} and signal ${signal}`);
     });
 } else if (cluster.isWorker) {
     // Worker code
+    process.emit('message', { filePath: 'test', start: 0, end: 100 });
     console.log(`Worker ${process.pid} started`);
     process.on('message', async ({ filePath, start, end }) => {
         console.log(`Worker ${process.pid} started with range ${start}-${end}`);
