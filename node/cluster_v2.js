@@ -64,8 +64,18 @@ if (cluster.isPrimary) {
 
         if (++finishedWorkers === numCPUs) {
             // All workers are done, process the final aggregated results
-            console.log(finalAggr);
-            console.log("Final: ", Object.keys(finalAggr).length);
+            // console.log(finalAggr);i
+
+            // Convert the object into an array of [key, value] pairs
+            let entries = Object.entries(finalAggr);
+
+            // If you need to work with a sorted object, convert it back
+            let entryObjects = Object.fromEntries(entries);
+            // Sort the entries by key
+            sortedObj = entries.sort((a, b) => a[0].localeCompare(b[0]));
+            console.log(sortedObj);
+            
+            console.log("Final: ", Object.keys(sortedObj).length);
             // End timing and log execution time
             const endTime = performance.now();
             console.log(`Total execution took ${(endTime - startTime).toFixed(2)} milliseconds.`);
