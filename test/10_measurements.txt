@@ -1,0 +1,10 @@
+Mumbai;25.5
+Mumbai;15.5
+Delhi;22.5
+Delhi;-38.5
+Bāţūfah;90.7
+Kumari;-10.0
+El Carmen de Atrato;50.8
+Champigny-sur-Marne;-23.2
+Überherrn;-25.4
+Villiersdorp;-18.1
